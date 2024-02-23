@@ -3,6 +3,7 @@ import { Application } from 'express';
 import envConfig from './config';
 import { winstonLogger } from '@dtlee2k1/jobber-shared';
 import healthRouter from './routes';
+import { checkConnection } from './elasticsearch';
 
 const SERVER_PORT = 4001;
 const logger = winstonLogger(`${envConfig.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug');
@@ -16,7 +17,9 @@ export function start(app: Application) {
 
 async function startQueues() {}
 
-function startElasticSearch() {}
+async function startElasticSearch() {
+  await checkConnection();
+}
 
 function startServer(app: Application) {
   try {
@@ -26,6 +29,6 @@ function startServer(app: Application) {
       logger.info(`Notification server running on port ${SERVER_PORT}`);
     });
   } catch (error) {
-    logger.log({ level: 'error', message: `NotificationService startServer method: ${error}` });
+    logger.log({ level: 'error', message: `NotificationService startServer() method: ${error}` });
   }
 }
