@@ -28,6 +28,7 @@
     "tsconfig-paths": "^4.2.0"
   },
   "dependencies": {
+    "@dtlee2k1/jobber-shared": "^0.0.2",
     "amqplib": "^0.10.3",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.9",
