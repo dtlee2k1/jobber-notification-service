@@ -2,12 +2,14 @@ import { Server as HttpServer } from 'http';
 import { Application } from 'express';
 import envConfig from './config';
 import { winstonLogger } from '@dtlee2k1/jobber-shared';
+import healthRouter from './routes';
 
 const SERVER_PORT = 4001;
 const logger = winstonLogger(`${envConfig.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug');
 
 export function start(app: Application) {
   startServer(app);
+  app.use(healthRouter);
   startQueues();
   startElasticSearch();
 }
