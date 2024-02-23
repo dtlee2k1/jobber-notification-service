@@ -17,7 +17,7 @@ export async function checkConnection() {
       isConnected = true;
     } catch (error) {
       logger.error('Connection to ElasticSearch failed. Retrying ...');
-      logger.log({ level: 'error', message: `NotificationService checkConnection() method: ${error}` });
+      logger.log({ level: 'error', message: `NotificationService checkConnection() method error: ${error}` });
     }
   }
 }

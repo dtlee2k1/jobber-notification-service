@@ -8,11 +8,12 @@ export async function createConnection() {
   try {
     const connection: Connection = await amqplib.connect(`${envConfig.RABBITMQ_ENDPOINT}`);
     const channel: Channel = await connection.createChannel();
+
     logger.info('Notification server connected to queue successfully');
     closeConnection(channel, connection);
     return channel;
   } catch (error) {
-    logger.log({ level: 'error', message: `NotificationService createConnection() method: ${error}` });
+    logger.log({ level: 'error', message: `NotificationService createConnection() method error: ${error}` });
     return undefined;
   }
 }

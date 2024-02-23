@@ -5,6 +5,8 @@ import { winstonLogger } from '@dtlee2k1/jobber-shared';
 import healthRouter from './routes';
 import { checkConnection } from './elasticsearch';
 import { createConnection } from './queues/connection';
+import { consumeAuthEmailMessages, consumeOrderEmailMessages } from './queues/email.consumer';
+import { Channel } from 'amqplib';
 
 const SERVER_PORT = 4001;
 const logger = winstonLogger(`${envConfig.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug');
@@ -17,11 +19,21 @@ export function start(app: Application) {
 }
 
 async function startQueues() {
-  await createConnection();
+  const emailChannel = (await createConnection()) as Channel;
+
+  await consumeAuthEmailMessages(emailChannel);
+  await emailChannel.assertExchange('jobber-auth-notification', 'direct');
+  const message = JSON.stringify({ name: 'User 1', service: 'Notification auth service' });
+  emailChannel.publish('jobber-auth-notification', 'auth-email', Buffer.from(message));
+
+  await consumeOrderEmailMessages(emailChannel);
+  await emailChannel.assertExchange('jobber-auth-notification', 'direct');
+  const message1 = JSON.stringify({ name: 'User 1', service: 'Notification order service' });
+  emailChannel.publish('jobber-order-notification', 'order-email', Buffer.from(message1));
 }
 
-async function startElasticSearch() {
-  await checkConnection();
+function startElasticSearch() {
+  checkConnection();
 }
 
 function startServer(app: Application) {
@@ -32,6 +44,6 @@ function startServer(app: Application) {
       logger.info(`Notification server running on port ${SERVER_PORT}`);
     });
   } catch (error) {
-    logger.log({ level: 'error', message: `NotificationService startServer() method: ${error}` });
+    logger.log({ level: 'error', message: `NotificationService startServer() method error: ${error}` });
   }
 }
