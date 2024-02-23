@@ -4,6 +4,7 @@ import envConfig from './config';
 import { winstonLogger } from '@dtlee2k1/jobber-shared';
 import healthRouter from './routes';
 import { checkConnection } from './elasticsearch';
+import { createConnection } from './queues/connection';
 
 const SERVER_PORT = 4001;
 const logger = winstonLogger(`${envConfig.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug');
@@ -15,7 +16,9 @@ export function start(app: Application) {
   startElasticSearch();
 }
 
-async function startQueues() {}
+async function startQueues() {
+  await createConnection();
+}
 
 async function startElasticSearch() {
   await checkConnection();
