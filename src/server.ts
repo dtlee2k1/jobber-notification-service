@@ -40,8 +40,8 @@ async function startQueues() {
   // emailChannel.publish('jobber-order-notification', 'order-email', Buffer.from(message1));
 }
 
-function startElasticSearch() {
-  checkConnection();
+async function startElasticSearch() {
+  await checkConnection();
 }
 
 function startServer(app: Application) {
