@@ -16,10 +16,10 @@ export async function consumeAuthEmailMessages(channel: Channel) {
     const queueName = 'auth-email-queue';
 
     await channel.assertExchange(exchangeName, 'direct');
-    const authEmailQueue = await channel.assertQueue(queueName, { durable: true, autoDelete: false });
-    await channel.bindQueue(authEmailQueue.queue, exchangeName, routingKey);
+    const jobberQueue = await channel.assertQueue(queueName, { durable: true, autoDelete: false });
+    await channel.bindQueue(jobberQueue.queue, exchangeName, routingKey);
 
-    channel.consume(authEmailQueue.queue, async (msg: ConsumeMessage | null) => {
+    channel.consume(jobberQueue.queue, async (msg: ConsumeMessage | null) => {
       // Send emails
       const { receiverEmail, username, verifyLink, resetLink, template } = JSON.parse(msg!.content.toString());
       const locals: IEmailLocals = {
@@ -51,7 +51,6 @@ export async function consumeOrderEmailMessages(channel: Channel) {
     await channel.bindQueue(orderEmailQueue.queue, exchangeName, routingKey);
 
     channel.consume(orderEmailQueue.queue, async (msg: ConsumeMessage | null) => {
-      console.log(JSON.parse(msg!.content.toString()));
       // Send emails
       const {
         receiverEmail,

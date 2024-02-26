@@ -11,9 +11,10 @@ const elasticSearchClient = new Client({
 export async function checkConnection() {
   let isConnected = false;
   while (!isConnected) {
+    logger.info('NotificationService connecting to ElasticSearch...');
     try {
       const health = await elasticSearchClient.cluster.health({});
-      logger.info({ level: 'error', message: `NotificationService Elasticsearch health status - ${health.status}` });
+      logger.info(`NotificationService Elasticsearch health status - ${health.status}`);
       isConnected = true;
     } catch (error) {
       logger.error('Connection to ElasticSearch failed. Retrying ...');

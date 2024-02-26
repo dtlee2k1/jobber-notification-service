@@ -10,6 +10,8 @@ RUN ls -a
 RUN npm install && npm install -g nodemon
 
 COPY src ./src
+COPY tools ./tools
+
 
 EXPOSE 4001
 

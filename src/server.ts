@@ -1,7 +1,8 @@
+import 'express-async-errors';
 import { Server as HttpServer } from 'http';
 import { Application } from 'express';
 import envConfig from './config';
-import { IEmailMessageDetails, winstonLogger } from '@dtlee2k1/jobber-shared';
+import { winstonLogger } from '@dtlee2k1/jobber-shared';
 import healthRouter from './routes';
 import { checkConnection } from './elasticsearch';
 import { createConnection } from './queues/connection';
@@ -20,24 +21,8 @@ export function start(app: Application) {
 
 async function startQueues() {
   const emailChannel = (await createConnection()) as Channel;
-
-  // Handle consume auth email
   await consumeAuthEmailMessages(emailChannel);
-  const verifyLink = `${envConfig.CLIENT_URL}/confirm_email/v_token=abcxyz1234567890`;
-  const messageDetails: IEmailMessageDetails = {
-    receiverEmail: `${envConfig.SENDER_EMAIL}`,
-    verifyLink,
-    template: 'verifyEmail'
-  };
-  await emailChannel.assertExchange('jobber-auth-notification', 'direct');
-  const message = JSON.stringify(messageDetails);
-  emailChannel.publish('jobber-auth-notification', 'auth-email', Buffer.from(message));
-
-  // Handle consume order email
   await consumeOrderEmailMessages(emailChannel);
-  // await emailChannel.assertExchange('jobber-auth-notification', 'direct');
-  // const message1 = JSON.stringify({ name: 'User 1', service: 'Notification order service' });
-  // emailChannel.publish('jobber-order-notification', 'order-email', Buffer.from(message1));
 }
 
 async function startElasticSearch() {
