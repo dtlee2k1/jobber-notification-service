@@ -9,8 +9,7 @@ const logger = winstonLogger(`${envConfig.ELASTIC_SEARCH_URL}`, 'mailTransportHe
 export async function emailTemplates(template: string, receiver: string, locals: IEmailLocals) {
   try {
     const smtpTransport = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
+      service: 'gmail',
       auth: {
         user: envConfig.SENDER_EMAIL,
         pass: envConfig.SENDER_EMAIL_PASSWORD
